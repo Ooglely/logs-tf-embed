@@ -1,0 +1,26 @@
+{
+  "name": "logs-tf-embed",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@next/font": "13.1.6",
+    "axios": "^1.3.2",
+    "bent": "^7.3.12",
+    "cheerio": "^1.0.0-rc.12",
+    "eslint": "8.33.0",
+    "eslint-config-next": "13.1.6",
+    "fs": "^0.0.1-security",
+    "get-url-title": "^2.0.0",
+    "next": "^13.1.6",
+    "node-fetch": "^3.3.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "requests": "^0.3.0"
+  }
+}
