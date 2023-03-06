@@ -2,11 +2,28 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import LogData from './_log_data'
-import LogTitle from './_log_title'
+import bent from 'bent'
+import { load } from 'cheerio'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Home() {
+export async function getServerSideProps(context) {
+  const id = context.query.id;
+
+  const getStream = bent('https://logs.tf/')
+
+  let stream = await getStream(id)
+  const html = await stream.text()
+
+  var $ = load(html);
+  var title = $("title").text();
+  console.log(title)
+
+  // Pass data to the page via props
+  return { props: { log_title: title } }
+}
+
+export default function Home({ log_title }) {
   return (
     <>
       <Head>
@@ -17,7 +34,7 @@ export default function Home() {
       <meta content="#444444" data-react-helmet="true" name="theme-color" />
       </Head>
       <LogData/>
-      <LogTitle/>
+      <div><p>Log Title: {log_title}</p></div>
     </>
   )
 }
