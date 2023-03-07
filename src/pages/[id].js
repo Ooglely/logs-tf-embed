@@ -18,16 +18,16 @@ async function writeLogData(id) {
     var log_title = title.split(" – logs.tf")[0];
     var log_description = map + " - " + length;
     var log_link = "https://logs.tf/" + id;
-    var log_image = 'localhost:3000/logs/img/' + id + '.png';
+    var log_image = 'https://logs-tf-embed.vercel.app/img/' + id + '.png';
 
-    await captureWebsite.file(log_link, 'logs/img/' + id + '.png', {
-      element: "body > div.container.main",
+    await captureWebsite.file(log_link, 'public/img/' + id + '.png', {
+      element: "#log-section-players",
       removeElements: ["#log-section-teams", "#log-section-rounds", "#log-section-healspread", "#log-section-cvc", "#log-section-footer", "body > div.container.main > footer"],
       inset: {
-        top: 150,
-        left: 65,
-        right: 65,
-        bottom: 230
+        top: -80,
+        left: 20,
+        right: 20,
+        bottom: 0
       }
     });
 
@@ -40,17 +40,19 @@ async function writeLogData(id) {
 
     var log_json = JSON.stringify(log_data);
     console.log(log_json);
-    await fs.promises.writeFile('logs/data/' + id + '.json', log_json);
+    await fs.promises.writeFile('logs/' + id + '.json', log_json);
 }
 
 export async function getServerSideProps(context) {
-  const id = context.query.id;
+  var id = context.query.id;
+  id = id.split('#')[0];
+  
 
-  if (!fs.existsSync("logs/data/" + id + ".json")) {
+  if (!fs.existsSync("logs/" + id + ".json")) {
     await writeLogData(id);
   }
 
-  var log_data = JSON.parse(fs.readFileSync("logs/data/" + id + ".json"));
+  var log_data = JSON.parse(fs.readFileSync("logs/" + id + ".json"));
 
   // Pass data to the page via props
   return { 
