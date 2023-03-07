@@ -1,14 +1,8 @@
 import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
-import LogData from './_log_data'
 import bent from 'bent'
 import { load } from 'cheerio'
 import captureWebsite from 'capture-website';
 import fs from 'fs';
-
-
-const inter = Inter({ subsets: ['latin'] })
 
 async function writeLogData(id) {
   const getStream = bent('https://logs.tf/')
