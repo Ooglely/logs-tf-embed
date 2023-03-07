@@ -4,6 +4,8 @@ import { load } from 'cheerio'
 import captureWebsite from 'capture-website';
 import fs from 'fs';
 
+const baseURL = process.env.RAILWAY_STATIC_URL;
+
 async function writeLogData(id) {
   const getStream = bent('https://logs.tf/')
 
@@ -18,7 +20,7 @@ async function writeLogData(id) {
     var log_title = title.split(" – logs.tf")[0];
     var log_description = map + " - " + length;
     var log_link = "https://logs.tf/" + id;
-    var log_image = 'https://logs-tf-embed.vercel.app/img/' + id + '.png';
+    var log_image = baseURL + '/img/' + id + '.png';
 
     await captureWebsite.file(log_link, 'public/img/' + id + '.png', {
       element: "#log-section-players",
