@@ -4,7 +4,7 @@ import { load } from 'cheerio'
 import captureWebsite from 'capture-website';
 import fs from 'fs';
 
-const baseURL = process.env.RAILWAY_STATIC_URL;
+const baseURL = process.env.RAILWAY_STATIC_URL || "localhost:3000";
 
 async function writeLogData(id) {
   const getStream = bent('https://logs.tf/')
@@ -22,16 +22,21 @@ async function writeLogData(id) {
     var log_link = "https://logs.tf/" + id;
     var log_image = baseURL + '/img/' + id + '.png';
 
-    await captureWebsite.file(log_link, 'public/img/' + id + '.png', {
-      element: "#log-section-players",
-      removeElements: ["#log-section-teams", "#log-section-rounds", "#log-section-healspread", "#log-section-cvc", "#log-section-footer", "body > div.container.main > footer"],
-      inset: {
-        top: -80,
-        left: 20,
-        right: 20,
-        bottom: 0
-      }
-    });
+    if (!fs.existsSync("public/img/" + id + ".png")) {
+      await captureWebsite.file(log_link, 'public/img/' + id + '.png', {
+        element: "#log-section-players",
+        removeElements: ["#log-section-teams", "#log-section-rounds", "#log-section-healspread", "#log-section-cvc", "#log-section-footer", "body > div.container.main > footer"],
+        inset: {
+          top: -80,
+          left: 20,
+          right: 20,
+          bottom: 0
+        },
+        launchOptions: {
+          args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        }
+      });
+    }
 
     var log_data = {
       title: log_title,
