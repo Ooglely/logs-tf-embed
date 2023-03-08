@@ -1,11 +1,9 @@
 # loogs.tf
 ## Embed logs.tf data on Discord
 
-***
-![Sample Log](/sample_log.png)
-***
-
 Inspired by [TweetFix](https://github.com/FixTweet/FixTweet), adding an o to a logs.tf url embeds a screenshot of the log page.
+
+![Sample Log](/sample_log.png)
 
 Uses Next.js, while also using Express to serve static images.
 
