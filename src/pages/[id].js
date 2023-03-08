@@ -64,7 +64,7 @@ export async function getServerSideProps(context) {
   // else, redirect to logs page
   const userAgent = context.req.headers['user-agent'] || '';
   // This bot regex is taken from the FixTweet repo, thanks to them
-  const isBot = userAgent.match("/bot|facebook|embed|got|firefox\/92|firefox\/38|curl|wget|go-http|yahoo|generator|whatsapp|preview|link|proxy|vkshare|images|analyzer|index|crawl|spider|python|cfnetwork|node/gi") !== null;
+  const isBot = userAgent.match("/bot|facebook|embed|got|firefox\/92|firefox\/38|curl|wget|go-http|yahoo|generator|whatsapp|preview|link|proxy|vkshare|images|analyzer|index|crawl|spider|python|cfnetwork|node/gi|Discordbot") !== null;
 
   if (!isBot) {
     return {
@@ -80,6 +80,7 @@ export async function getServerSideProps(context) {
     await fs.promises.mkdir("logs/")
   }
 
+  // If the log data is not already generated, make it!
   if (!fs.existsSync("logs/" + id + ".json")) {
     await writeLogData(id);
   }
