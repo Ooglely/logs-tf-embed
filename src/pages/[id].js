@@ -20,10 +20,10 @@ async function writeLogData(id) {
     var log_title = title.split(" – logs.tf")[0];
     var log_description = map + " - " + length;
     var log_link = "https://logs.tf/" + id;
-    var log_image = baseURL + '/img/' + id;
+    var log_image = baseURL + '/img/' + id + '.png';
 
-    if (!fs.existsSync("public/img/" + id + ".png")) {
-      await captureWebsite.file(log_link, 'public/img/' + id + '.png', {
+    if (!fs.existsSync("img/" + id + ".png")) {
+      await captureWebsite.file(log_link, 'img/' + id + '.png', {
         element: "#log-section-players",
         removeElements: ["#log-section-teams", "#log-section-rounds", "#log-section-healspread", "#log-section-cvc", "#log-section-footer", "body > div.container.main > footer"],
         inset: {
