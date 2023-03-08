@@ -23,8 +23,10 @@ async function writeLogData(id) {
     var log_image = baseURL + '/img/' + id + '.png';
     
     // Make sure img dir is created
-    await fs.promises.mkdir("img/")
-
+    if (!fs.existsSync("img/")) {
+      await fs.promises.mkdir("img/")
+    }
+    
     if (!fs.existsSync("img/" + id + ".png")) {
       await captureWebsite.file(log_link, 'img/' + id + '.png', {
         element: "#log-section-players",
@@ -58,7 +60,9 @@ export async function getServerSideProps(context) {
   id = id.split('#')[0];
 
   // Make sure logs dir is created
-  await fs.promises.mkdir("logs/")
+  if (!fs.existsSync("logs/")) {
+    await fs.promises.mkdir("logs/")
+  }
 
   if (!fs.existsSync("logs/" + id + ".json")) {
     await writeLogData(id);
@@ -85,7 +89,9 @@ export default function Home({ title, description, link, image }) {
       <meta content={description} property="og:description" />
       <meta content={link} property="og:url" />
       <meta content={image} property="og:image" />
-      <meta content="#444444" data-react-helmet="true" name="theme-color" />
+      <meta property="og:type" content="website" />
+      <meta name="theme-color" content="#FF0000" />
+      <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <div><p>Log Title: {title}</p></div>
       <div><p>Description: {description}</p></div>
