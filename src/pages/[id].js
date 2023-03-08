@@ -21,6 +21,9 @@ async function writeLogData(id) {
     var log_description = map + " - " + length;
     var log_link = "https://logs.tf/" + id;
     var log_image = baseURL + '/img/' + id + '.png';
+    
+    // Make sure img dir is created
+    await fs.promises.mkdir("img/")
 
     if (!fs.existsSync("img/" + id + ".png")) {
       await captureWebsite.file(log_link, 'img/' + id + '.png', {
@@ -53,7 +56,9 @@ async function writeLogData(id) {
 export async function getServerSideProps(context) {
   var id = context.query.id;
   id = id.split('#')[0];
-  
+
+  // Make sure logs dir is created
+  await fs.promises.mkdir("logs/")
 
   if (!fs.existsSync("logs/" + id + ".json")) {
     await writeLogData(id);
