@@ -69,14 +69,14 @@ export async function getServerSideProps(context) {
   // This bot regex is taken from the FixTweet repo, thanks to them
   const isBot = userAgent.match("/bot|facebook|embed|got|firefox\/92|firefox\/38|curl|wget|go-http|yahoo|generator|whatsapp|preview|link|proxy|vkshare|images|analyzer|index|crawl|spider|python|cfnetwork|node/gi|Discordbot") !== null;
 
-  /* if (!isBot) {
+  if (!isBot) {
     return {
       redirect: {
         destination: 'https://logs.tf/' + id,
         permanent: true,
       },
     }
-  } */
+  }
 
   // Make sure logs dir is created
   if (!fs.existsSync("logs/")) {
