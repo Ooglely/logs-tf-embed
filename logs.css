@@ -1,0 +1,27 @@
+.main {
+    background: #2b2d31;
+}
+
+body {
+    color: #d8dade;
+}
+
+.log tbody > tr:nth-child(odd), .loglist tbody > tr:nth-child(odd) {
+    background: #3d3f43;
+}
+
+.log td a {
+    color: #d8dade;
+}
+
+.zero {
+    color: #585858 !important;
+}
+
+.blu {
+    background: #37809d !important;
+}
+
+.red {
+    background: #b74e3c !important;
+}

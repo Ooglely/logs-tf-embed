@@ -35,11 +35,14 @@ async function writeLogData(id) {
         top: -80,
         left: 20,
         right: 20,
-        bottom: 0
+        bottom: 10
       },
       launchOptions: {
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      }
+      },
+      styles: [
+        "logs.css",
+      ]
     });
   }
 
@@ -66,14 +69,14 @@ export async function getServerSideProps(context) {
   // This bot regex is taken from the FixTweet repo, thanks to them
   const isBot = userAgent.match("/bot|facebook|embed|got|firefox\/92|firefox\/38|curl|wget|go-http|yahoo|generator|whatsapp|preview|link|proxy|vkshare|images|analyzer|index|crawl|spider|python|cfnetwork|node/gi|Discordbot") !== null;
 
-  if (!isBot) {
+  /* if (!isBot) {
     return {
       redirect: {
         destination: 'https://logs.tf/' + id,
         permanent: true,
       },
     }
-  }
+  } */
 
   // Make sure logs dir is created
   if (!fs.existsSync("logs/")) {
@@ -81,7 +84,8 @@ export async function getServerSideProps(context) {
   }
 
   // If the log data is not already generated, make it!
-  if (!fs.existsSync("logs/" + id + ".json")) {
+  // Also if the image doesn't exist it should be regenerated
+  if (!fs.existsSync("logs/" + id + ".json") || !fs.existsSync("img/" + id + ".png")) {
     await writeLogData(id);
   }
 
