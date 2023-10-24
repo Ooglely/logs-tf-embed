@@ -5,6 +5,7 @@ import captureWebsite from 'capture-website';
 import fs from 'fs';
 
 const baseURL = process.env.RAILWAY_STATIC_URL || "localhost:3000";
+const volumePATH = process.env.RAILWAY_VOLUME_MOUNT_PATH || "/vol/";
 
 async function writeLogData(id) {
   const getStream = bent('https://logs.tf/')
@@ -23,12 +24,12 @@ async function writeLogData(id) {
   var log_image = "https://" + baseURL + '/img/' + id + '.png';
   
   // Make sure img dir is created
-  if (!fs.existsSync("img/")) {
+  if (!fs.existsSync(volumePATH + "img/")) {
     await fs.promises.mkdir("img/")
   }
   
-  if (!fs.existsSync("img/" + id + ".png")) {
-    await captureWebsite.file(log_link, 'img/' + id + '.png', {
+  if (!fs.existsSync(volumePATH + "img/" + id + ".png")) {
+    await captureWebsite.file(log_link, volumePATH + 'img/' + id + '.png', {
       element: "#log-section-players",
       removeElements: ["#log-section-teams", "#log-section-rounds", "#log-section-healspread", "#log-section-cvc", "#log-section-footer", "body > div.container.main > footer"],
       inset: {
@@ -55,7 +56,7 @@ async function writeLogData(id) {
 
   var log_json = JSON.stringify(log_data);
   console.log(log_json);
-  await fs.promises.writeFile('logs/' + id + '.json', log_json);
+  await fs.promises.writeFile(volumePATH + 'logs/' + id + '.json', log_json);
 }
 
 export async function getServerSideProps(context) {
@@ -79,17 +80,17 @@ export async function getServerSideProps(context) {
   }
 
   // Make sure logs dir is created
-  if (!fs.existsSync("logs/")) {
-    await fs.promises.mkdir("logs/")
+  if (!fs.existsSync(volumePATH + "logs/")) {
+    await fs.promises.mkdir(volumePATH + "logs/")
   }
 
   // If the log data is not already generated, make it!
   // Also if the image doesn't exist it should be regenerated
-  if (!fs.existsSync("logs/" + id + ".json") || !fs.existsSync("img/" + id + ".png")) {
+  if (!fs.existsSync(volumePATH + "logs/" + id + ".json") || !fs.existsSync(volumePATH + "img/" + id + ".png")) {
     await writeLogData(id);
   }
 
-  var log_data = JSON.parse(fs.readFileSync("logs/" + id + ".json"));
+  var log_data = JSON.parse(fs.readFileSync(volumePATH + "logs/" + id + ".json"));
 
   // Pass data to the page via props
   return { 
