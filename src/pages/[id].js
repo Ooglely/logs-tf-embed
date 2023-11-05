@@ -27,7 +27,6 @@ async function writeLogData(id) {
   if (!fs.existsSync(volumePATH + "img/")) {
     await fs.promises.mkdir("img/")
   }
-  
   if (!fs.existsSync(volumePATH + "img/" + id + ".png")) {
     await captureWebsite.file(log_link, volumePATH + 'img/' + id + '.png', {
       element: "#log-section-players",
@@ -43,9 +42,16 @@ async function writeLogData(id) {
       },
       styles: [
         "logs.css",
-      ]
-    });
+      ],
+      beforeScreenshot: async (page, browser) => {
+        if (fs.exists(volumePATH + "logs/" + id + ".img")) {
+          fs.unlink(volumePATH + "logs/" + id + ".img");
+        }
+      }
+    }
+    );
   }
+  
 
   var log_data = {
     title: log_title,
