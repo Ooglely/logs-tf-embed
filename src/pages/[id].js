@@ -44,8 +44,8 @@ async function writeLogData(id) {
         "logs.css",
       ],
       beforeScreenshot: async (page, browser) => {
-        if (fs.exists(volumePATH + "logs/" + id + ".img")) {
-          fs.unlink(volumePATH + "logs/" + id + ".img");
+        if (fs.exists(volumePATH + "img/" + id + ".img")) {
+          fs.unlink(volumePATH + "img/" + id + ".img");
         }
       }
     }
