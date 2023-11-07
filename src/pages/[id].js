@@ -44,10 +44,18 @@ async function writeLogData(id) {
         "logs.css",
       ],
       beforeScreenshot: async (page, browser) => {
-        if (fs.exists(volumePATH + "img/" + id + ".img")) {
-          fs.unlink(volumePATH + "img/" + id + ".img");
+        try {
+          await fs.access(screenshotPath);
+          console.log(`Screenshot file already exists: ${screenshotPath}`);
+          // Delete the existing file
+          await fs.unlink(screenshotPath);
+          console.log(`Existing screenshot file deleted: ${screenshotPath}`);
+        } catch (error) {
+          // File does not exist or was successfully deleted
         }
       }
+    }).catch((err) => {
+      console.log(err);
     }
     );
   }
