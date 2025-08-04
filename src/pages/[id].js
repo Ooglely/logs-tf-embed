@@ -47,7 +47,7 @@ async function takeScreenshot(url, outputPath, id) {
   try {
 
     const context = await browser.newContext({
-      viewport: { width: 1200, height: 800 }
+      viewport: { width: 1920, height: 1080 }
     });
     
     page = await context.newPage();
@@ -78,15 +78,12 @@ async function takeScreenshot(url, outputPath, id) {
       }
     }
     
-    // Add custom CSS if needed
+    // Add custom CSS
     await page.addStyleTag({
-      path: 'logs.css' // Make sure this file exists in your project
-    }).catch(() => {
-      // CSS file might not exist, continue without it
-      console.log('logs.css not found, continuing without custom styles');
-    });
+      path: 'logs.css'
+    })
     
-    // Take screenshot of the specific element
+    // Take screenshot of the leaderboard
     const element = page.locator('#log-section-players');
     await element.screenshot({ 
       path: outputPath,

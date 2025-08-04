@@ -14,6 +14,10 @@ body {
     color: #d8dade;
 }
 
+.log-section {
+    border: none;
+}
+
 .zero {
     color: #585858 !important;
 }
