@@ -1,11 +1,106 @@
 import Head from 'next/head'
 import bent from 'bent'
 import { load } from 'cheerio'
-import captureWebsite from 'capture-website';
+import { chromium } from 'playwright';
 import fs from 'fs';
 
 const baseURL = process.env.RAILWAY_STATIC_URL || "localhost:3000";
-const volumePATH = process.env.RAILWAY_VOLUME_MOUNT_PATH || "/vol/";
+const volumePATH = process.env.RAILWAY_VOLUME_MOUNT_PATH || "vol/";
+
+let browserInstance = null;
+
+async function getBrowserInstance() {
+  if (!browserInstance) {
+    browserInstance = await chromium.launch({
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--memory-pressure-off'
+      ]
+    });
+
+    // Handle cleanup on process exit
+    process.on('exit', async () => {
+      if (browserInstance) {
+        await browserInstance.close();
+      }
+    });
+
+    process.on('SIGTERM', async () => {
+      if (browserInstance) {
+        await browserInstance.close();
+      }
+      process.exit(0);
+    });
+  }
+  return browserInstance;
+}
+
+async function takeScreenshot(url, outputPath, id) {
+  
+  const browser = await getBrowserInstance();
+  let page = null;
+  
+  try {
+
+    const context = await browser.newContext({
+      viewport: { width: 1200, height: 800 }
+    });
+    
+    page = await context.newPage();
+    
+    await page.goto(url, { 
+      waitUntil: 'networkidle', 
+      timeout: 30000 
+    });
+    
+    // Wait for the specific element
+    await page.waitForSelector('#log-section-players', { timeout: 10000 });
+    
+    // Hide unwanted elements
+    const elementsToHide = [
+      '#log-section-teams',
+      '#log-section-rounds', 
+      '#log-section-healspread',
+      '#log-section-cvc',
+      '#log-section-footer',
+      'body > div.container.main > footer'
+    ];
+    
+    for (const selector of elementsToHide) {
+      try {
+        await page.locator(selector).evaluate(el => el.style.display = 'none');
+      } catch (e) {
+        // Element might not exist, continue
+      }
+    }
+    
+    // Add custom CSS if needed
+    await page.addStyleTag({
+      path: 'logs.css' // Make sure this file exists in your project
+    }).catch(() => {
+      // CSS file might not exist, continue without it
+      console.log('logs.css not found, continuing without custom styles');
+    });
+    
+    // Take screenshot of the specific element
+    const element = page.locator('#log-section-players');
+    await element.screenshot({ 
+      path: outputPath,
+      type: 'png'
+    });
+    
+    console.log(`Screenshot saved: ${id}.png`);
+    await context.close();
+    
+  } catch (error) {
+    console.error(`Screenshot error for ${id}:`, error);
+    throw error;
+  }
+}
 
 async function writeLogData(id) {
   const getStream = bent('https://logs.tf/')
@@ -25,42 +120,24 @@ async function writeLogData(id) {
   
   // Make sure img dir is created
   if (!fs.existsSync(volumePATH + "img/")) {
-    await fs.promises.mkdir("img/")
+    await fs.promises.mkdir(volumePATH + "img/");
   }
+
   if (!fs.existsSync(volumePATH + "img/" + id + ".png")) {
-    await captureWebsite.file(log_link, volumePATH + 'img/' + id + '.png', {
-      element: "#log-section-players",
-      removeElements: ["#log-section-teams", "#log-section-rounds", "#log-section-healspread", "#log-section-cvc", "#log-section-footer", "body > div.container.main > footer"],
-      inset: {
-        top: -80,
-        left: 20,
-        right: 20,
-        bottom: 10
-      },
-      launchOptions: {
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      },
-      styles: [
-        "logs.css",
-      ],
-      beforeScreenshot: async (page, browser) => {
-        try {
-          await fs.access(screenshotPath);
-          console.log(`Screenshot file already exists: ${screenshotPath}`);
-          // Delete the existing file
-          await fs.unlink(screenshotPath);
-          console.log(`Existing screenshot file deleted: ${screenshotPath}`);
-        } catch (error) {
-          // File does not exist or was successfully deleted
-        }
+    try {
+      await takeScreenshot(log_link, volumePATH + 'img/' + id + '.png', id);
+    } catch (error) {
+      console.error(`Failed to create screenshot for ${id}:`, error);
+
+      try {
+        await fs.promises.unlink(volumePATH + 'img/' + id + '.png');
+      } catch (unlinkError) {
+        // Ignore if file doesn't exist
       }
-    }).catch((err) => {
-      console.log(err);
+      // Continue without screenshot rather than failing completely
     }
-    );
   }
   
-
   var log_data = {
     title: log_title,
     description: log_description,
