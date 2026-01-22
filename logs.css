@@ -6,7 +6,8 @@ body {
     color: #d8dade;
 }
 
-.log tbody > tr:nth-child(odd), .loglist tbody > tr:nth-child(odd) {
+.log tbody > tr:nth-child(odd),
+.loglist tbody > tr:nth-child(odd) {
     background: #3d3f43;
 }
 
@@ -19,7 +20,7 @@ body {
 }
 
 .zero {
-    color: #585858 !important;
+    color: #77797a !important;
 }
 
 .blu {
@@ -28,4 +29,14 @@ body {
 
 .red {
     background: #b74e3c !important;
+}
+
+table#players {
+    padding: 10px;
+    width: 100%;
+    margin: 0px;
+}
+
+#log-section-players {
+    padding: 15px;
 }
